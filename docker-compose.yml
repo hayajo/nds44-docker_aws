@@ -1,0 +1,32 @@
+hostname:
+  build: ./hostname
+  # image: localhost:5000/nds44_hostname
+  ports:
+    - 8080
+  environment:
+    - VIRTUAL_HOST=hostname.example.com
+
+counter:
+  build: ./counter
+  # image: localhost:5000/nds44_counter
+  ports:
+    - 8080
+  links:
+    - redis
+  environment:
+    - VIRTUAL_HOST=counter.example.jp
+
+redis:
+  image: redis
+
+proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - 80:80
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+  # log_driver: fluentd
+  # log_opt:
+    # fluentd-address: localhost:24224
+    # fluentd-tag: docker.proxy.{{.FullID}}
+

@@ -1,0 +1,11 @@
+fluentd:
+  # build: ./fluentd
+  image: localhost:5000/nds44_fluentd
+  ports:
+    - 24224:24224
+  environment:
+    - FLUENTD_S3_ACCESS_KEY_ID
+    - FLUENTD_S3_SECRET_ACCESS_KEY
+    - FLUENTD_S3_BUCKET
+    - FLUENTD_S3_REGION
+    - FLUENTD_S3_PATH=logs/

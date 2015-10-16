@@ -1,0 +1,270 @@
+Docker + AWS
+17 Oct 2015
+
+hayajo
+@hayajo
+
+* Outline
+
+1. Dockerを利用した開発の流れ
+2. DockerイメージをS3に保存する
+3. EC2のプロビジョニング & Dokcerコンテナのデプロイメント
+4. ログをS3に保存する
+
+* About me
+
+- Hayato Imai (@hayajo)
+- インフラエンジニア
+- [[http://www.amazon.co.jp/dp/4774173703][WEB+DB PRESS Vol.87 連載「Perl Hackers Hub」第33回「MojoliciousでかんたんWebアプリケーション開発」]]
+
+* 1. Dockerを利用した開発の流れ
+
+* Docker Toolbox
+
+.link https://www.docker.com/toolbox
+
+Docker実行環境一式のインストーラ。
+
+- Docker Client
+- Docker Machine
+- Docker Compose
+- Docker Kitematic
+- VirtualBox
+
+* 開発の流れ
+
+- コードの編集
+- docker-compose build
+- docker-compose up
+- 動作テスト
+
+* Demo(1)
+
+開発環境の準備
+
+  docker-machine create --driver=virtualbox dev
+
+リポジトリのclone
+
+  git clone git@github.com:hayajo/nds44-docker_aws.git
+  cd nds44-docker_aws
+
+環境変数の準備([[http://direnv.net/][direnv]])
+
+  direnv edit
+
+Dockerイメージをビルド
+
+  docker-compose build
+
+* Demo(2)
+
+アプリケーションの実行
+
+  docker-compose up
+
+動作確認
+
+  curl --resolve hostname.example.com:80:$(docker-machine ip dev) hostname.example.com
+  curl --resolve counter.example.jp:80:$(docker-machine ip dev) counter.example.jp
+
+* Docker ImageをS3にアップロード
+
+* プライベートリポジトリ
+
+- [[https://hub.docker.com/][Docker Hub]]
+- [[https://www.docker.com/docker-trusted-registry][Docker Trusted Registry]]
+- [[https://aws.amazon.com/jp/ecr/][Amazon EC2 Container Registry(ECR)]]
+- [[https://cloud.google.com/container-registry/][Google Container Registry]], [[https://quay.io/][Quay.io]], etc.
+- セルフホスト([[https://hub.docker.com/r/distribution/registry/][Docker Registry]])
+
+* S3バックエンドのDocker Registryをローカル環境に構築
+
+運用の手間を減らす（ただし環境ごとに準備が必要）。
+
+* Demo(1)
+
+registryコンテナを起動
+
+  docker run -p 5000:5000 \
+    -e REGISTRY_STORAGE=s3 \
+    -e REGISTRY_STORAGE_S3_ACCESSKEY=$REGISTRY_STORAGE_S3_ACCESSKEY \
+    -e REGISTRY_STORAGE_S3_SECRETKEY=$REGISTRY_STORAGE_S3_SECRETKEY \
+    -e REGISTRY_STORAGE_S3_BUCKET=$REGISTRY_STORAGE_S3_BUCKET \
+    -e REGISTRY_STORAGE_S3_REGION=ap-northeast-1 \
+    -e REGISTRY_STORAGE_S3_ROOTDIRECTORY=/ \
+    -d \
+    distribution/registry
+
+* Deom(2)
+
+Dockerイメージにタグ付け
+
+  docker tag nds44_hostname localhost:5000/nds44_hostname
+  docker tag nds44_counter localhost:5000/nds44_counter
+
+Dockerイメージを登録
+
+  docker push localhost:5000/nds44_hostname
+  docker push localhost:5000/nds44_counter
+
+登録されたイメージをAPIで確認
+
+  curl -s -L http://$(docker-machine ip dev):5000/v2/_catalog | jq .
+
+S3を確認
+
+
+* EC2のプロビジョニング & デプロイメント
+
+* AWSでのDocker実行環境
+
+- [[https://aws.amazon.com/jp/ecs/details/][Amazon EC2 Container Service (ECS)]]
+- EC2上にDocker環境構築（手動、プロビジョニングツール、Docker Machine、etc.）
+
+* Docker MachineでEC2のプロビジョニング
+
+Docker Machineは下記のドライバを利用可能。
+
+amazonec2
+azure
+digitalocean
+exoscale
+generic
+google
+none
+openstack
+rackspace
+softlayer
+virtualbox
+vmwarefusion
+vmwarevcloudair
+vmwarevsphere
+
+* Demo(1)
+
+EC2のプロビジョニング
+
+  docker-machie create --driver=amazonec2 \
+    --amazonec2-access-key=$AWS_ACCESS_KEY_ID \
+    --amazonec2-secret-key=$AWS_SECRET_ACCESS_KEY \
+    --amazonec2-ami=$AWS_AMI \
+    --amazonec2-region=$AWS_DEFAULT_REGION \
+    --amazonec2-vpc-id=$AWS_VPC_ID \
+    dev-amazonec2
+
+  eval "$(docker-machine env dev-amazonec2)"
+
+* Demo(2)
+
+registryコンテナを起動
+
+  docker run -p 5000:5000 \
+    -e REGISTRY_STORAGE=s3 \
+    -e REGISTRY_STORAGE_S3_ACCESSKEY=$REGISTRY_STORAGE_S3_ACCESSKEY \
+    -e REGISTRY_STORAGE_S3_SECRETKEY=$REGISTRY_STORAGE_S3_SECRETKEY \
+    -e REGISTRY_STORAGE_S3_BUCKET=$REGISTRY_STORAGE_S3_BUCKET \
+    -e REGISTRY_STORAGE_S3_REGION=ap-northeast-1 \
+    -e REGISTRY_STORAGE_S3_ROOTDIRECTORY=/ \
+    -d \
+    distribution/registry
+
+* Demo(3)
+
+docker-compose.ymlを編集(build -> image)
+
+  -  build: ./hostname
+  +  image: localhost:5000/nds44_hostname
+  ...
+  -  build: ./counter
+  +  image: localhost:5000/nds44_counter
+
+アプリケーションの実行
+
+  docker-compose up
+
+hostname.example.comをスケールする
+
+  docker-compose scale hostname.example.com=3
+
+動作確認
+（hostname.example.comに数回アクセスしてスケールされているか確認）
+
+  curl --resolve hostname.example.com:80:$(docker-machine ip dev-amazonec2) hostname.example.com
+  curl --resolve counter.example.jp:80:$(docker-machine ip dev-amazonec2) counter.example.jp
+
+
+* Fluentd logging driverでログをS3に保存
+
+* ログの確認方法
+
+- docker logs
+- docker-compose logs
+
+* Fluentd logging driver
+
+.link https://docs.docker.com/reference/logging/fluentd/
+
+docker 1.8でサポート。
+
+コンテナのログ(STDOUT, STDERR)を直接Fluentdに投げることができる。
+
+  docker run \
+    --log-driver=fluentd \
+    --log-opt fluentd-address=localhost:24224 \
+    -d \
+    localhost:5000/nds44_hostname
+
+* Demo(1)
+
+S3プラグインを利用するfluentdコンテナを起動
+
+  docker-compose -f docker-fluentd.yml up -d
+
+docker-compose.ymlを編集してfluentdにログを投げるようにする
+
+  proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  +  log_driver: fluentd
+  +  log_opt:
+  +    fluentd-address: localhost:24224
+  +    fluentd-tag: docker.proxy.{{.FullID}}  xxx
+
+* Demo(2)
+
+コンテナの再デプロイ
+
+  docker-compose up -d
+
+動作確認
+（数回アクセスしてS3にログが保存されているか確認）
+
+  curl --resolve hostname.example.com:80:$(docker-machine ip dev-amazonec2) hostname.example.com
+  curl --resolve counter.example.jp:80:$(docker-machine ip dev-amazonec2) counter.example.jp
+  ...
+
+
+* （おまけ）マルチホスト環境を考える
+
+* クラスタ構築
+
+- [[https://docs.docker.com/swarm/][Docker Swarm]]
+- [[http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_tutorial.html][ECS CLI]]
+
+* サービスディスカバリ
+
+シングルホストではlinkが使えるが、マルチホストでは...
+
+- i[[http://kubernetes.io/][Kubernetes]]
+- [[http://weave.works/][Weave]]
+- [[https://www.consul.io/][Consul]], [[https://github.com/coreos/etcd][etcd]], [[https://zookeeper.apache.org/][ZooKeeper]]
+- アンバサダーパターン（トラフィックをフォワードするコンテナ）
+
+etc.
+
+もう少し知見がたまったら発表でき...たらいいなぁ。
+
