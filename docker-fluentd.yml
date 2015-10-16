@@ -1,6 +1,6 @@
 fluentd:
   # build: ./fluentd
-  image: localhost:5000/nds44_fluentd
+  image: localhost:5000/nds44/fluentd
   ports:
     - 24224:24224
   environment:

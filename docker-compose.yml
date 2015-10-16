@@ -1,14 +1,14 @@
-hostname:
+hostname.example.com:
   build: ./hostname
-  # image: localhost:5000/nds44_hostname
+  # image: localhost:5000/nds44/hostname
   ports:
     - 8080
   environment:
     - VIRTUAL_HOST=hostname.example.com
 
-counter:
+counter.example.jp:
   build: ./counter
-  # image: localhost:5000/nds44_counter
+  # image: localhost:5000/nds44/counter
   ports:
     - 8080
   links:

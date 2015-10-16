@@ -42,6 +42,12 @@ Docker実行環境一式のインストーラ。
 
 * Demo(1)
 
+Dockerによるマルチドメイン環境の構築
+
+.image http://g.gravizo.com/g?%40startuml%0A%0Ainterface%20%22HTTP%22%0A%0Apackage%20%22Docker%20Machine%22%20%7B%0A%20%20HTTP%20--%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bhostname.example.com(nds44%2Fhostname)%5D%20%3A%20hostname.example.com%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20%3A%20counter.example.jp%0A%20%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20--%3E%20%5Bredis(redis)%5D%0A%7D%0A%0A%40enduml%0A
+
+* Demo(1)
+
 開発環境の準備
 
   docker-machine create --driver=virtualbox dev
@@ -55,11 +61,11 @@ Docker実行環境一式のインストーラ。
 
   direnv edit
 
+* Demo(2)
+
 Dockerイメージをビルド
 
   docker-compose build
-
-* Demo(2)
 
 アプリケーションの実行
 
@@ -102,20 +108,19 @@ registryコンテナを起動
 
 Dockerイメージにタグ付け
 
-  docker tag nds44_hostname localhost:5000/nds44_hostname
-  docker tag nds44_counter localhost:5000/nds44_counter
+  docker tag nds44dockeraws_hostname.example.com localhost:5000/nds44/hostname
+  docker tag nds44dockeraws_counter.example.jp localhost:5000/nds44/counter
 
 Dockerイメージを登録
 
-  docker push localhost:5000/nds44_hostname
-  docker push localhost:5000/nds44_counter
+  docker push localhost:5000/nds44/hostname
+  docker push localhost:5000/nds44/counter
 
 登録されたイメージをAPIで確認
 
   curl -s -L http://$(docker-machine ip dev):5000/v2/_catalog | jq .
 
 S3を確認
-
 
 * EC2のプロビジョニング & デプロイメント
 
@@ -219,7 +224,8 @@ docker 1.8でサポート。
 
 * Demo(1)
 
-S3プラグインを利用するfluentdコンテナを起動
+fluent-plugin-s3を利用するfluentdコンテナを起動
+（事前にビルドしてlocalhost:5000/nds44/fluentdとして登録済）
 
   docker-compose -f docker-fluentd.yml up -d
 
@@ -249,6 +255,11 @@ docker-compose.ymlを編集してfluentdにログを投げるようにする
   curl --resolve counter.example.jp:80:$(docker-machine ip dev-amazonec2) counter.example.jp
   ...
 
+* Demo(3)
+
+EC2をteminateするには次のコマンドを実行（stopだと課金され続けるので注意）
+
+  docker-machine rm dev-amazonec2
 
 * （おまけ）マルチホスト環境を考える
 

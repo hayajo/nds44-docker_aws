@@ -1,0 +1,13 @@
+@startuml
+
+interface "HTTP"
+
+package "Docker Machine" {
+  HTTP -- [proxy(jwilder/nginx-proxy)]
+  [proxy(jwilder/nginx-proxy)] --> [hostname.example.com(nds44/hostname)] : hostname.example.com
+  [proxy(jwilder/nginx-proxy)] --> [counter.example.jp(nds44/counter)] : counter.example.jp
+  [counter.example.jp(nds44/counter)] --> [redis(redis)]
+}
+
+@enduml
+
