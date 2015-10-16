@@ -261,7 +261,7 @@ docker-compose.ymlを編集してfluentdにログを投げるようにする
 
 シングルホストではlinkが使えるが、マルチホストでは...
 
-- i[[http://kubernetes.io/][Kubernetes]]
+- [[http://kubernetes.io/][Kubernetes]]
 - [[http://weave.works/][Weave]]
 - [[https://www.consul.io/][Consul]], [[https://github.com/coreos/etcd][etcd]], [[https://zookeeper.apache.org/][ZooKeeper]]
 - アンバサダーパターン（トラフィックをフォワードするコンテナ）
