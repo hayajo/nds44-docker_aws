@@ -40,7 +40,7 @@ Docker実行環境一式のインストーラ。
 - docker-compose up
 - 動作テスト
 
-* Demo(1)
+* Demo
 
 Dockerによるマルチドメイン環境の構築
 
