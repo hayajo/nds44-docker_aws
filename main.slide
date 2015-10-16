@@ -194,6 +194,8 @@ hostname.example.comをスケールする
 
   docker-compose scale hostname.example.com=3
 
+* Demo(4)
+
 動作確認
 （hostname.example.comに数回アクセスしてスケールされているか確認）
 
