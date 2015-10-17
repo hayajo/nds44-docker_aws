@@ -90,6 +90,10 @@ Dockerイメージをビルド
 
 運用の手間を減らす（ただし環境ごとに準備が必要）。
 
+* Demo
+
+.image http://g.gravizo.com/g?%40startuml%0A%0Ainterface%20%22HTTP%22%0Ainterface%20%22Docker%20API%22%20AS%20Docker%0A%0Apackage%20%22Docker%20Machine%22%20%7B%0A%20%20HTTP%20--%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bhostname.example.com(nds44%2Fhostname)%5D%20%3A%20hostname.example.com%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20%3A%20counter.example.jp%0A%20%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20--%3E%20%5Bredis(redis)%5D%0A%20%20Docker%20--%20%5Bregistry(distribution%2Fregistry)%5D%20%3A%20docker%20push%0A%7D%0A%0Apackage%20%22AWS%22%20%7B%0A%20%20%5Bregistry(distribution%2Fregistry)%5D%20-%3E%20%5BS3%5D%0A%7D%0A%0A%40enduml%0A
+
 * Demo(1)
 
 registryコンテナを起動
@@ -223,6 +227,10 @@ docker 1.8でサポート。
     --log-opt fluentd-address=localhost:24224 \
     -d \
     localhost:5000/nds44_hostname
+
+* Demo
+
+.image http://g.gravizo.com/g?%40startuml%0A%0Ainterface%20%22HTTP%22%0Ainterface%20%22Docker%20API%22%20AS%20Docker%0A%0Apackage%20%22Docker%20Machine%22%20%7B%0A%20%20HTTP%20--%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bhostname.example.com(nds44%2Fhostname)%5D%20%3A%20hostname.example.com%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20%3A%20counter.example.jp%0A%20%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20--%3E%20%5Bredis(redis)%5D%0A%20%20Docker%20--%20%5Bregistry(distribution%2Fregistry)%5D%20%3A%20docker%20push%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20-%3E%20%5Bfluentd(nds44%2Ffluentd)%5D%0A%7D%0A%0Apackage%20%22AWS%22%20%7B%0A%20%20%5Bregistry(distribution%2Fregistry)%5D%20--%3E%20%5BS3%5D%0A%20%20%5Bfluentd(nds44%2Ffluentd)%5D%20--%3E%20%5BS3%5D%0A%7D%0A%0A%40enduml%0A
 
 * Demo(1)
 
