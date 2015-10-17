@@ -22,7 +22,7 @@ package "Docker Machine" {
   [proxy(jwilder/nginx-proxy)] --> [hostname.example.com(nds44/hostname)] : hostname.example.com
   [proxy(jwilder/nginx-proxy)] --> [counter.example.jp(nds44/counter)] : counter.example.jp
   [counter.example.jp(nds44/counter)] --> [redis(redis)]
-  Docker -- [registry(distribution/registry)] : docker push
+  Docker -- [registry(distribution/registry)] : docker push|pull
 }
 
 package "AWS" {
@@ -42,7 +42,7 @@ package "Docker Machine" {
   [proxy(jwilder/nginx-proxy)] --> [hostname.example.com(nds44/hostname)] : hostname.example.com
   [proxy(jwilder/nginx-proxy)] --> [counter.example.jp(nds44/counter)] : counter.example.jp
   [counter.example.jp(nds44/counter)] --> [redis(redis)]
-  Docker -- [registry(distribution/registry)] : docker push
+  Docker -- [registry(distribution/registry)] : docker push|pull
   [proxy(jwilder/nginx-proxy)] -> [fluentd(nds44/fluentd)]
 }
 
