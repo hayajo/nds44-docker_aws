@@ -44,7 +44,7 @@ Docker実行環境一式のインストーラ。
 
 Dockerによるマルチドメイン環境の構築
 
-.image http://g.gravizo.com/g?%40startuml%0A%0Ainterface%20%22HTTP%22%0A%0Apackage%20%22Docker%20Machine%22%20%7B%0A%20%20HTTP%20--%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bhostname.example.com(nds44%2Fhostname)%5D%20%3A%20hostname.example.com%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20%3A%20counter.example.jp%0A%20%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20--%3E%20%5Bredis(redis)%5D%0A%7D%0A%0A%40enduml%0A
+.image http://g.gravizo.com/svg?@startuml;interface%20%22HTTP%22;package%20%22Docker%20Machine%22%20{;%20%20HTTP%20--%20[proxy%28jwilder/nginx-proxy%29];%20%20[proxy%28jwilder/nginx-proxy%29]%20--%3E%20[hostname.example.com%28nds44/hostname%29]%20:%20hostname.example.com;%20%20[proxy%28jwilder/nginx-proxy%29]%20--%3E%20[counter.example.jp%28nds44/counter%29]%20:%20counter.example.jp;%20%20[counter.example.jp%28nds44/counter%29]%20--%3E%20[redis%28redis%29];};@enduml;
 
 * Demo(1)
 
@@ -92,7 +92,7 @@ Dockerイメージをビルド
 
 * Demo
 
-.image http://g.gravizo.com/g?%40startuml%0A%0Ainterface%20%22HTTP%22%0Ainterface%20%22Docker%20API%22%20AS%20Docker%0A%0Apackage%20%22Docker%20Machine%22%20%7B%0A%20%20HTTP%20--%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bhostname.example.com(nds44%2Fhostname)%5D%20%3A%20hostname.example.com%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20%3A%20counter.example.jp%0A%20%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20--%3E%20%5Bredis(redis)%5D%0A%20%20Docker%20--%20%5Bregistry(distribution%2Fregistry)%5D%20%3A%20docker%20push%7Cpull%0A%7D%0A%0Apackage%20%22AWS%22%20%7B%0A%20%20%5Bregistry(distribution%2Fregistry)%5D%20-%3E%20%5BS3%5D%0A%7D%0A%0A%40enduml%0A
+.image http://g.gravizo.com/svg?@startuml;interface%20%22HTTP%22;interface%20%22Docker%20API%22%20AS%20Docker;package%20%22Docker%20Machine%22%20{;%20%20HTTP%20--%20[proxy%28jwilder/nginx-proxy%29];%20%20[proxy%28jwilder/nginx-proxy%29]%20--%3E%20[hostname.example.com%28nds44/hostname%29]%20:%20hostname.example.com;%20%20[proxy%28jwilder/nginx-proxy%29]%20--%3E%20[counter.example.jp%28nds44/counter%29]%20:%20counter.example.jp;%20%20[counter.example.jp%28nds44/counter%29]%20--%3E%20[redis%28redis%29];%20%20Docker%20--%20[registry%28distribution/registry%29]%20:%20docker%20push|pull;};package%20%22AWS%22%20{;%20%20[registry%28distribution/registry%29]%20-%3E%20[S3];};@enduml;
 
 * Demo(1)
 
@@ -230,7 +230,7 @@ docker 1.8でサポート。
 
 * Demo
 
-.image http://g.gravizo.com/g?%40startuml%0A%0Ainterface%20%22HTTP%22%0Ainterface%20%22Docker%20API%22%20AS%20Docker%0A%0Apackage%20%22Docker%20Machine%22%20%7B%0A%20%20HTTP%20--%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bhostname.example.com(nds44%2Fhostname)%5D%20%3A%20hostname.example.com%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20--%3E%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20%3A%20counter.example.jp%0A%20%20%5Bcounter.example.jp(nds44%2Fcounter)%5D%20--%3E%20%5Bredis(redis)%5D%0A%20%20Docker%20--%20%5Bregistry(distribution%2Fregistry)%5D%20%3A%20docker%20push%7Cpull%0A%20%20%5Bproxy(jwilder%2Fnginx-proxy)%5D%20-%3E%20%5Bfluentd(nds44%2Ffluentd)%5D%0A%7D%0A%0Apackage%20%22AWS%22%20%7B%0A%20%20%5Bregistry(distribution%2Fregistry)%5D%20--%3E%20%5BS3%5D%0A%20%20%5Bfluentd(nds44%2Ffluentd)%5D%20--%3E%20%5BS3%5D%0A%7D%0A%0A%40enduml%0A
+.image http://g.gravizo.com/svg?@startuml;interface%20%22HTTP%22;interface%20%22Docker%20API%22%20AS%20Docker;package%20%22Docker%20Machine%22%20{;%20%20HTTP%20--%20[proxy%28jwilder/nginx-proxy%29];%20%20[proxy%28jwilder/nginx-proxy%29]%20--%3E%20[hostname.example.com%28nds44/hostname%29]%20:%20hostname.example.com;%20%20[proxy%28jwilder/nginx-proxy%29]%20--%3E%20[counter.example.jp%28nds44/counter%29]%20:%20counter.example.jp;%20%20[counter.example.jp%28nds44/counter%29]%20--%3E%20[redis%28redis%29];%20%20Docker%20--%20[registry%28distribution/registry%29]%20:%20docker%20push|pull;%20%20[proxy%28jwilder/nginx-proxy%29]%20-%3E%20[fluentd%28nds44/fluentd%29];};package%20%22AWS%22%20{;%20%20[registry%28distribution/registry%29]%20--%3E%20[S3];%20%20[fluentd%28nds44/fluentd%29]%20--%3E%20[S3];};@enduml;
 
 * Demo(1)
 
